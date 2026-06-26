@@ -20,6 +20,7 @@ Sistema integral para la gestión de inventarios, que combina una calculadora di
 
 ## 📋 Estructura del Proyecto
 
+```text
 InduTech-Inventario/
 ├── back/     # Proyecto Spring Boot
 └── front/    # Proyecto React
