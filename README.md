@@ -39,14 +39,14 @@ Un IDE de tu preferencia (IntelliJ IDEA para el backend, VS Code para el fronten
 1. Configuración del Backend (/back)
 El backend se ejecutará por defecto en el puerto 8080.
 
-  1. Abre una terminal en la carpeta back/.
+  a. Abre una terminal en la carpeta back/.
 
-  2. Compila el proyecto:
+  b. Compila el proyecto:
 
     Bash
     mvn clean install
     
-  3. Ejecuta la aplicación:
+  c. Ejecuta la aplicación:
 
     Bash
     mvn spring-boot:run
@@ -56,14 +56,14 @@ Nota: Si utilizas base de datos externa, asegúrate de configurar el application
 2. Configuración del Frontend (/front)
 El frontend se ejecutará por defecto en el puerto 5173.
 
-  1. Abre una terminal en la carpeta front/.
+  a. Abre una terminal en la carpeta front/.
 
-  2. Instala las dependencias:
+  b. Instala las dependencias:
 
     Bash
     npm install
 
-  3. Inicia el servidor de desarrollo:
+  c. Inicia el servidor de desarrollo:
 
     Bash
     npm run dev
