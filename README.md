@@ -36,37 +36,35 @@ Node.js (Versión 24+ recomendada) y NPM.
 
 Un IDE de tu preferencia (IntelliJ IDEA para el backend, VS Code para el frontend).
 
-1. Configuración del Backend (/back)
-El backend se ejecutará por defecto en el puerto 8080.
+1. Configuración del Backend
+    1. Abre una terminal en la carpeta `back/`.
 
-  a. Abre una terminal en la carpeta back/.
+    2. Compila el proyecto:
 
-  b. Compila el proyecto:
-
-    Bash
-    mvn clean install
+            Bash
+            mvn clean install
     
-  c. Ejecuta la aplicación:
+    3. Ejecuta la aplicación:
 
-    Bash
-    mvn spring-boot:run
+            Bash
+            mvn spring-boot:run
     
 Nota: Si utilizas base de datos externa, asegúrate de configurar el application.properties en src/main/resources.
 
 2. Configuración del Frontend (/front)
 El frontend se ejecutará por defecto en el puerto 5173.
 
-  a. Abre una terminal en la carpeta front/.
+    1. Abre una terminal en la carpeta front/.
 
-  b. Instala las dependencias:
+    2. Instala las dependencias:
 
-    Bash
-    npm install
+            Bash
+            npm install
 
-  c. Inicia el servidor de desarrollo:
+    3. Inicia el servidor de desarrollo:
 
-    Bash
-    npm run dev
+            Bash
+            npm run dev
     
 Abre tu navegador en la URL que indique la terminal (usualmente http://localhost:5173).
 
