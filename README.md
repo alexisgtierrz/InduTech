@@ -63,7 +63,7 @@ El frontend se ejecutará por defecto en el puerto 5173.
     Bash
     npm install
 
-  3.Inicia el servidor de desarrollo:
+  3. Inicia el servidor de desarrollo:
 
     Bash
     npm run dev
