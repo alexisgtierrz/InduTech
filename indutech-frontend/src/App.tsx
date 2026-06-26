@@ -1,0 +1,107 @@
+import { useState, useEffect } from 'react';
+import { AbcCalculator } from './components/AbcCalculator';
+import { Simulator } from './components/Simulator';
+import './App.css';
+
+function App() {
+  const [tabActiva, setTabActiva] = useState('simulador');
+  const [inventario, setInventario] = useState<any[]>([]);
+  const [nuevoItem, setNuevoItem] = useState({ sku: '', demanda: '', costo: '' });
+  const [inventarioABC, setInventarioABC] = useState<any[]>([]);
+
+  useEffect(() => {
+    const cargarProductos = async () => {
+      try {
+        const res = await fetch('http://localhost:8080/api/inventory/all');
+        const data = await res.json();
+        setInventario(data);
+      } catch (e) { console.error("Error al cargar productos", e); }
+    };
+    cargarProductos();
+  }, []);
+
+  useEffect(() => {
+    const fetchABC = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/inventory/abc', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(inventario)
+        });
+        setInventarioABC(await response.json());
+      } catch (error) { console.error(error); }
+    };
+    if (inventario.length > 0) fetchABC();
+    else setInventarioABC([]);
+  }, [inventario]);
+
+  const agregarProducto = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nuevoItem.sku || !nuevoItem.demanda || !nuevoItem.costo) return;
+    const productoNuevo = { sku: nuevoItem.sku, demanda: parseFloat(nuevoItem.demanda), costo: parseFloat(nuevoItem.costo) };
+    try {
+        await fetch('http://localhost:8080/api/inventory/add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(productoNuevo)
+        });
+        setInventario([...inventario, productoNuevo]);
+        setNuevoItem({ sku: '', demanda: '', costo: '' });
+    } catch (e) { console.error("Error al agregar", e); }
+  };
+
+  const eliminarProducto = (skuAEliminar: string) => {
+    setInventario(inventario.filter(item => item.sku !== skuAEliminar));
+  };
+
+  const [params, setParams] = useState({ demandaAnual: 950, costoPreparacion: 300, tasaProduccion: 2000, costoMantenimiento: 20, diasOperativos: 250, tiempoEntrega: 6, desviacion: 2, z: 2.05 });
+  const [resultados, setResultados] = useState({ loteOptimoEPQ: 0, inventarioSeguridad: 0, puntoReorden: 0, inventarioMaximo: 0, tiempoCicloDias: 0, tiempoProduccionDias: 0 });
+
+  useEffect(() => {
+    const fetchMetricas = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/inventory/calculate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(params)
+        });
+        setResultados(await response.json());
+      } catch (error) { console.error("Error", error); }
+    };
+    fetchMetricas();
+  }, [params]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setParams({ ...params, [e.target.name]: parseFloat(e.target.value) });
+  };
+
+  return (
+    <div className="dashboard">
+      <header className="header">
+        <h1>🏭 InduTech S.A. - Control de Inventarios</h1>
+      </header>
+      <div className="tabs">
+        <button className={tabActiva === 'abc' ? 'tab active' : 'tab'} onClick={() => setTabActiva('abc')}>1. Calculadora Dinámica ABC</button>
+        <button className={tabActiva === 'simulador' ? 'tab active' : 'tab'} onClick={() => setTabActiva('simulador')}>2. Simulador Operativo</button>
+      </div>
+      <div className="main-content">
+        {tabActiva === 'abc' && (
+            <AbcCalculator 
+                inventario={inventario} 
+                inventarioABC={inventarioABC} 
+                nuevoItem={nuevoItem} 
+                setNuevoItem={setNuevoItem} 
+                agregarProducto={agregarProducto} 
+                eliminarProducto={eliminarProducto} 
+                valorTotalInventario={inventarioABC.reduce((acc, item) => acc + item.valorAnual, 0)}
+                articuloCritico={inventarioABC.length > 0 ? inventarioABC[0].sku : 'Ninguno'}
+            />
+        )}
+        {tabActiva === 'simulador' && (
+            <Simulator params={params} resultados={resultados} handleChange={handleChange} />
+        )}
+      </div>
+    </div>
+  );
+}
+export default App;
