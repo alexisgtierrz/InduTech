@@ -82,4 +82,18 @@ public class InventoryService {
         p.setCosto(dto.costo);
         productoRepository.save(p);
     }
+
+    public void eliminarProducto(String sku) {
+        productoRepository.deleteBySku(sku);
+    }
+
+    public void actualizarProducto(String skuOriginal, ItemDTO dto) {
+        Producto p = productoRepository.findBySku(skuOriginal);
+        if (p != null) {
+            p.setSku(dto.sku);
+            p.setDemanda(dto.demanda);
+            p.setCosto(dto.costo);
+            productoRepository.save(p);
+        }
+    }
 }

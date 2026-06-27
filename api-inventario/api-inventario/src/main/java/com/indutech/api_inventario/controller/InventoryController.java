@@ -41,4 +41,14 @@ public class InventoryController {
     public List<Producto> getAllProductos() {
         return inventoryService.obtenerTodosLosProductos();
     }
+
+    @DeleteMapping("/delete/{sku}")
+    public void deleteProducto(@PathVariable String sku) {
+        inventoryService.eliminarProducto(sku);
+    }
+
+    @PutMapping("/update/{sku}")
+    public void updateProducto(@PathVariable String sku, @RequestBody ItemDTO item) {
+        inventoryService.actualizarProducto(sku, item);
+    }
 }
