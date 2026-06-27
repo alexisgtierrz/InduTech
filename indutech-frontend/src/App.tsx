@@ -4,11 +4,17 @@ import { Simulator } from './components/Simulator';
 import './App.css';
 
 function App() {
-  const [tabActiva, setTabActiva] = useState('simulador');
+  const [tabActiva, setTabActiva] = useState(() => {
+    return localStorage.getItem('pestañaActiva') || 'abc';
+  });
   const [inventario, setInventario] = useState<any[]>([]);
   const [nuevoItem, setNuevoItem] = useState({ sku: '', demanda: '', costo: '' });
   const [inventarioABC, setInventarioABC] = useState<any[]>([]);
 
+  useEffect(() => {
+    localStorage.setItem('pestañaActiva', tabActiva);
+  }, [tabActiva]);
+  
   useEffect(() => {
     const cargarProductos = async () => {
       try {
@@ -43,7 +49,7 @@ function App() {
         await fetch('http://localhost:8080/api/inventory/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify([productoNuevo]) // <-- SOLUCIÓN 1: ENVOLVEMOS EN CORCHETES []
+            body: JSON.stringify([productoNuevo])
         });
         setInventario([...inventario, productoNuevo]);
         setNuevoItem({ sku: '', demanda: '', costo: '' });
@@ -52,7 +58,6 @@ function App() {
 
   const eliminarProducto = async (skuAEliminar: string) => {
     try {
-        // <-- SOLUCIÓN 2: AGREGAMOS EL FETCH PARA ELIMINAR
         await fetch(`http://localhost:8080/api/inventory/delete/${skuAEliminar}`, {
             method: 'DELETE'
         });
@@ -71,7 +76,7 @@ function App() {
     } catch (e) { console.error("Error al editar", e); }
   };
 
-  const [params, setParams] = useState({ demandaAnual: 950, costoPreparacion: 300, tasaProduccion: 2000, costoMantenimiento: 20, diasOperativos: 250, tiempoEntrega: 6, desviacion: 2, z: 2.05 })
+  const [params, setParams] = useState({ demandaAnual: 950, costoPreparacion: 300, tasaProduccion: 2000, costoMantenimiento: 20, diasOperativos: 250, tiempoEntrega: 6, desviacion: 2, nivelServicio: 98 })
   const [resultados, setResultados] = useState({ loteOptimoEPQ: 0, inventarioSeguridad: 0, puntoReorden: 0, inventarioMaximo: 0, tiempoCicloDias: 0, tiempoProduccionDias: 0 });
 
   useEffect(() => {
