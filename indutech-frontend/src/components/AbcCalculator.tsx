@@ -175,7 +175,7 @@ export const AbcCalculator = ({ inventario, inventarioABC, nuevoItem, setNuevoIt
       )}
       
       <div className="abc-conclusion" style={{ marginTop: '30px' }}>
-        <p><strong>Diagnóstico en vivo:</strong> El artículo de mayor impacto es <strong>{articuloCritico}</strong>.</p>
+        <p><strong>Diagnóstico:</strong> El artículo de mayor impacto es <strong>{articuloCritico}</strong>.</p>
       </div>
     </div>
   );

@@ -54,16 +54,12 @@ export const Simulator = ({ params, resultados, handleChange }: Props) => {
           <h3 className="module-title">2. Gestión de Riesgos (ROP)</h3>
           <div className="module-inputs">
             <div className="input-group">
-              <label>Nivel de Servicio (%):</label>
-              <input 
-                type="number" 
-                name="nivelServicio" 
-                min="50" 
-                max="99.9" 
-                step="0.1" 
-                value={params.nivelServicio} 
-                onChange={handleChange} 
-              />
+              <label>Nivel de Servicio (Z):</label>
+              <select name="z" value={params.z} onChange={handleChange}>
+                <option value={1.65}>95%</option>
+                <option value={2.05}>98%</option>
+                <option value={2.33}>99%</option>
+              </select>
             </div>
             <div className="input-row-half">
               <div className="input-group">
