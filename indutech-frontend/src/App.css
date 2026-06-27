@@ -455,3 +455,34 @@ h2 {
   border-radius: 4px;
 }
 
+.input-row-half {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+}
+
+.input-row-half .input-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.input-row-half .input-group input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-row-half {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+}
+
+.input-row-half .input-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.input-row-half .input-group input {
+  width: 100%;
+  box-sizing: border-box;
+}
