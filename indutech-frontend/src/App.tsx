@@ -43,18 +43,35 @@ function App() {
         await fetch('http://localhost:8080/api/inventory/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(productoNuevo)
+            body: JSON.stringify([productoNuevo]) // <-- SOLUCIÓN 1: ENVOLVEMOS EN CORCHETES []
         });
         setInventario([...inventario, productoNuevo]);
         setNuevoItem({ sku: '', demanda: '', costo: '' });
     } catch (e) { console.error("Error al agregar", e); }
   };
 
-  const eliminarProducto = (skuAEliminar: string) => {
-    setInventario(inventario.filter(item => item.sku !== skuAEliminar));
+  const eliminarProducto = async (skuAEliminar: string) => {
+    try {
+        // <-- SOLUCIÓN 2: AGREGAMOS EL FETCH PARA ELIMINAR
+        await fetch(`http://localhost:8080/api/inventory/delete/${skuAEliminar}`, {
+            method: 'DELETE'
+        });
+        setInventario(inventario.filter(item => item.sku !== skuAEliminar));
+    } catch (e) { console.error("Error al eliminar", e); }
   };
 
-  const [params, setParams] = useState({ demandaAnual: 950, costoPreparacion: 300, tasaProduccion: 2000, costoMantenimiento: 20, diasOperativos: 250, tiempoEntrega: 6, desviacion: 2, z: 2.05 });
+  const editarProducto = async (skuOriginal: string, productoEditado: any) => {
+    try {
+        await fetch(`http://localhost:8080/api/inventory/update/${skuOriginal}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(productoEditado)
+        });
+        setInventario(inventario.map(item => item.sku === skuOriginal ? productoEditado : item));
+    } catch (e) { console.error("Error al editar", e); }
+  };
+
+  const [params, setParams] = useState({ demandaAnual: 950, costoPreparacion: 300, tasaProduccion: 2000, costoMantenimiento: 20, diasOperativos: 250, tiempoEntrega: 6, desviacion: 2, z: 2.05 })
   const [resultados, setResultados] = useState({ loteOptimoEPQ: 0, inventarioSeguridad: 0, puntoReorden: 0, inventarioMaximo: 0, tiempoCicloDias: 0, tiempoProduccionDias: 0 });
 
   useEffect(() => {
@@ -93,6 +110,7 @@ function App() {
                 setNuevoItem={setNuevoItem} 
                 agregarProducto={agregarProducto} 
                 eliminarProducto={eliminarProducto} 
+                editarProducto={editarProducto}
                 valorTotalInventario={inventarioABC.reduce((acc, item) => acc + item.valorAnual, 0)}
                 articuloCritico={inventarioABC.length > 0 ? inventarioABC[0].sku : 'Ninguno'}
             />

@@ -27,12 +27,16 @@ public class InventoryService {
 
         int inventarioMaximo = (int) Math.round(epq * (1 - (req.demandaAnual / req.tasaProduccion)));
 
-        double tiempoCicloDias = ((double) epq / req.demandaAnual) * req.diasOperativos;
-        double tiempoProduccionDias = ((double) epq / req.tasaProduccion) * req.diasOperativos;
+        int tiempoCicloDias = (int) Math.round(((double) epq / req.demandaAnual) * req.diasOperativos);
+        int tiempoProduccionDias = (int) Math.round(((double) epq / req.tasaProduccion) * req.diasOperativos);
 
         double demandaDiaria = req.demandaAnual / req.diasOperativos;
-        int ss = (int) Math.round(req.z * (demandaDiaria * req.desviacion));
-        int rop = (int) Math.round((demandaDiaria * req.tiempoEntrega) + ss);
+
+        double ssExacto = req.z * (demandaDiaria * req.desviacion);
+
+        int ss = (int) Math.round(ssExacto);
+
+        int rop = (int) Math.round((demandaDiaria * req.tiempoEntrega) + ssExacto);
 
         return new InventoryResponse(epq, ss, rop, inventarioMaximo, tiempoCicloDias, tiempoProduccionDias);
     }
