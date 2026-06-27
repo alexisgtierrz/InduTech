@@ -32,13 +32,30 @@ public class InventoryService {
 
         double demandaDiaria = req.demandaAnual / req.diasOperativos;
 
-        double ssExacto = req.z * (demandaDiaria * req.desviacion);
+        // 1. Convertimos el porcentaje (ej: 98) a probabilidad (0.98)
+        double probabilidad = req.nivelServicio / 100.0;
+
+        // 2. Calculamos el valor Z dinámicamente
+        double z = calcularZ(probabilidad);
+
+        double ssExacto = z * (demandaDiaria * req.desviacion);
 
         int ss = (int) Math.round(ssExacto);
 
         int rop = (int) Math.round((demandaDiaria * req.tiempoEntrega) + ssExacto);
 
         return new InventoryResponse(epq, ss, rop, inventarioMaximo, tiempoCicloDias, tiempoProduccionDias);
+    }
+
+    private double calcularZ(double p) {
+        if (p >= 0.9999) return 3.99; // Límite superior de seguridad
+        if (p <= 0.5) return 0.0;     // No calculamos para servicio menor al 50%
+
+        double t = Math.sqrt(-2.0 * Math.log(1.0 - p));
+        double c0 = 2.515517, c1 = 0.802853, c2 = 0.010328;
+        double d1 = 1.432788, d2 = 0.189269, d3 = 0.001308;
+
+        return t - ((c2 * t + c1) * t + c0) / (((d3 * t + d2) * t + d1) * t + 1.0);
     }
 
     public List<AbcResponseDTO> clasificarABC(List<ItemDTO> inventario) {
@@ -65,7 +82,7 @@ public class InventoryService {
             }
 
             if (porcentajeAcumulado <= 80) res.clase = "A";
-            else if (porcentajeAcumulado <= 95) res.clase = "B";
+            else if (porcentajeAcumulado <= 96) res.clase = "B";
             else res.clase = "C";
 
             res.porcentaje = Math.round(res.porcentaje * 100.0) / 100.0;

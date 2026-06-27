@@ -8,5 +8,5 @@ public class InventoryRequest {
     public int diasOperativos;
     public double tiempoEntrega;
     public double desviacion;
-    public double z;
+    public double nivelServicio;
 }
