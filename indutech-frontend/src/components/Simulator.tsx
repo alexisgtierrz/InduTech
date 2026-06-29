@@ -74,8 +74,8 @@ export const Simulator = ({ params, resultados, handleChange }: Props) => {
                 <label>Desviación Demanda (σd):</label>
                 <input 
                   type="number" 
-                  name="desviacionDemanda" 
-                  value={params.desviacionDemanda} 
+                  name="desviacion" 
+                  value={params.desviacion} 
                   onChange={handleChange} 
                 />
               </div>
