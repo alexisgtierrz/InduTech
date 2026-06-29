@@ -62,6 +62,7 @@ public class InventoryService {
         List<AbcResponseDTO> resultados = new ArrayList<>();
         double valorTotal = 0;
 
+        // 1. Cálculo de valores absolutos
         for (ItemDTO dto : inventario) {
             AbcResponseDTO res = new AbcResponseDTO();
             res.sku = dto.sku;
@@ -72,19 +73,36 @@ public class InventoryService {
             resultados.add(res);
         }
 
+        // 2. Ordenamiento de mayor a menor
         resultados.sort((a, b) -> Double.compare(b.valorAnual, a.valorAnual));
 
+        // 3. Asignación de clases y porcentajes
         double porcentajeAcumulado = 0;
+
         for (AbcResponseDTO res : resultados) {
             if (valorTotal > 0) {
                 res.porcentaje = (res.valorAnual / valorTotal) * 100;
-                porcentajeAcumulado += res.porcentaje;
+            } else {
+                res.porcentaje = 0;
             }
 
-            if (porcentajeAcumulado <= 80) res.clase = "A";
-            else if (porcentajeAcumulado <= 96) res.clase = "B";
-            else res.clase = "C";
+            // Calculamos cuánto daría el acumulado SI sumamos este ítem
+            double acumuladoConEsteItem = porcentajeAcumulado + res.porcentaje;
 
+            // Regla: Si es el primer ítem (porcentajeAcumulado == 0) SIEMPRE es A.
+            // Si no es el primero, evaluamos el acumulado CON el ítem incluido.
+            if (porcentajeAcumulado == 0 || acumuladoConEsteItem <= 80) {
+                res.clase = "A";
+            } else if (acumuladoConEsteItem <= 96) {
+                res.clase = "B";
+            } else {
+                res.clase = "C";
+            }
+
+            // Actualizamos el acumulado real
+            porcentajeAcumulado = acumuladoConEsteItem;
+
+            // Redondeo final
             res.porcentaje = Math.round(res.porcentaje * 100.0) / 100.0;
         }
 
