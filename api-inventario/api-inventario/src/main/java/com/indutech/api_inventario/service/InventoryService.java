@@ -36,7 +36,7 @@ public class InventoryService {
 
         double z = calcularZ(probabilidad);
 
-        double ssExacto = z * (demandaDiaria * req.desviacion);
+        double ssExacto = z * req.desviacion * Math.sqrt(req.tiempoEntrega);
 
         int ss = (int) Math.round(ssExacto);
 
