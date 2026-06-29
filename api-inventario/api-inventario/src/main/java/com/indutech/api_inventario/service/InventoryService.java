@@ -32,10 +32,8 @@ public class InventoryService {
 
         double demandaDiaria = req.demandaAnual / req.diasOperativos;
 
-        // 1. Convertimos el porcentaje (ej: 98) a probabilidad (0.98)
         double probabilidad = req.nivelServicio / 100.0;
 
-        // 2. Calculamos el valor Z dinámicamente
         double z = calcularZ(probabilidad);
 
         double ssExacto = z * (demandaDiaria * req.desviacion);
@@ -48,8 +46,8 @@ public class InventoryService {
     }
 
     private double calcularZ(double p) {
-        if (p >= 0.9999) return 3.99; // Límite superior de seguridad
-        if (p <= 0.5) return 0.0;     // No calculamos para servicio menor al 50%
+        if (p >= 0.9999) return 3.99;
+        if (p <= 0.5) return 0.0;
 
         double t = Math.sqrt(-2.0 * Math.log(1.0 - p));
         double c0 = 2.515517, c1 = 0.802853, c2 = 0.010328;
@@ -62,7 +60,6 @@ public class InventoryService {
         List<AbcResponseDTO> resultados = new ArrayList<>();
         double valorTotal = 0;
 
-        // 1. Cálculo de valores absolutos
         for (ItemDTO dto : inventario) {
             AbcResponseDTO res = new AbcResponseDTO();
             res.sku = dto.sku;
@@ -73,10 +70,8 @@ public class InventoryService {
             resultados.add(res);
         }
 
-        // 2. Ordenamiento de mayor a menor
         resultados.sort((a, b) -> Double.compare(b.valorAnual, a.valorAnual));
 
-        // 3. Asignación de clases y porcentajes
         double porcentajeAcumulado = 0;
 
         for (AbcResponseDTO res : resultados) {
@@ -86,11 +81,8 @@ public class InventoryService {
                 res.porcentaje = 0;
             }
 
-            // Calculamos cuánto daría el acumulado SI sumamos este ítem
             double acumuladoConEsteItem = porcentajeAcumulado + res.porcentaje;
 
-            // Regla: Si es el primer ítem (porcentajeAcumulado == 0) SIEMPRE es A.
-            // Si no es el primero, evaluamos el acumulado CON el ítem incluido.
             if (porcentajeAcumulado == 0 || acumuladoConEsteItem <= 80) {
                 res.clase = "A";
             } else if (acumuladoConEsteItem <= 96) {
@@ -99,10 +91,8 @@ public class InventoryService {
                 res.clase = "C";
             }
 
-            // Actualizamos el acumulado real
             porcentajeAcumulado = acumuladoConEsteItem;
 
-            // Redondeo final
             res.porcentaje = Math.round(res.porcentaje * 100.0) / 100.0;
         }
 
