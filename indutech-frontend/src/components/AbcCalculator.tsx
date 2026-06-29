@@ -46,7 +46,7 @@ export const AbcCalculator = ({ inventario, inventarioABC, nuevoItem, setNuevoIt
 
   return (
     <div className="panel full-width">
-      <h2>Gestión de SKUs y Clasificación de Pareto</h2>
+      <h2>Gestión de SKUs y Clasificación ABC</h2>
       <div className="inventory-summary">
         <div className="summary-stat">
           <span className="stat-label">Total de Artículos (SKUs)</span>
