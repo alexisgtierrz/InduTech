@@ -103,8 +103,8 @@ function App() {
         <h1>🏭 InduTech S.A. - Control de Inventarios</h1>
       </header>
       <div className="tabs">
-        <button className={tabActiva === 'abc' ? 'tab active' : 'tab'} onClick={() => setTabActiva('abc')}>1. Calculadora Dinámica ABC</button>
-        <button className={tabActiva === 'simulador' ? 'tab active' : 'tab'} onClick={() => setTabActiva('simulador')}>2. Simulador Operativo</button>
+        <button className={tabActiva === 'abc' ? 'tab active' : 'tab'} onClick={() => setTabActiva('abc')}>Calculadora Dinámica ABC</button>
+        <button className={tabActiva === 'simulador' ? 'tab active' : 'tab'} onClick={() => setTabActiva('simulador')}>Simulador Operativo</button>
       </div>
       <div className="main-content">
         {tabActiva === 'abc' && (

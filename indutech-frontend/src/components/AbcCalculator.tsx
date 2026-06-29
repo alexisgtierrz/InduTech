@@ -109,7 +109,7 @@ export const AbcCalculator = ({ inventario, inventarioABC, nuevoItem, setNuevoIt
       {datosProcesados.length > 0 && (
         <div style={{ marginTop: '50px', paddingTop: '30px', borderTop: '2px solid #f1f5f9' }}>
           <h3 style={{ textAlign: 'center', color: '#1e293b', marginBottom: '30px' }}>
-            Curva de Pareto - Distribución de Valor
+            Gráfico de Pareto
           </h3>
           <div style={{ height: '450px', width: '100%', backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px' }}>
             <ResponsiveContainer>
@@ -173,10 +173,6 @@ export const AbcCalculator = ({ inventario, inventarioABC, nuevoItem, setNuevoIt
           </div>
         </div>
       )}
-      
-      <div className="abc-conclusion" style={{ marginTop: '30px' }}>
-        <p><strong>Diagnóstico:</strong> El artículo de mayor impacto es <strong>{articuloCritico}</strong>.</p>
-      </div>
     </div>
   );
 };
