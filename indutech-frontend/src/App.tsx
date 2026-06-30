@@ -3,6 +3,8 @@ import { AbcCalculator } from './components/AbcCalculator';
 import { Simulator } from './components/Simulator';
 import './App.css';
 
+const API_URL = import.meta.env.VITE_API_URL || "${API_URL}";
+
 function App() {
   const [tabActiva, setTabActiva] = useState(() => {
     return localStorage.getItem('pestañaActiva') || 'abc';
@@ -20,7 +22,7 @@ function App() {
   useEffect(() => {
     const cargarProductos = async () => {
       try {
-        const res = await fetch('http://localhost:8080/api/inventory/all');
+        const res = await fetch('${API_URL}/api/inventory/all');
         const data = await res.json();
         setInventario(data);
       } catch (e) { console.error("Error al cargar productos", e); }
@@ -31,7 +33,7 @@ function App() {
   useEffect(() => {
     const fetchABC = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/api/inventory/abc?limiteA=${limiteA}&limiteB=${limiteB}`, {
+        const response = await fetch(`${API_URL}/api/inventory/abc?limiteA=${limiteA}&limiteB=${limiteB}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(inventario)
@@ -49,7 +51,7 @@ function App() {
     if (!nuevoItem.sku || !nuevoItem.demanda || !nuevoItem.costo) return;
     const productoNuevo = { sku: nuevoItem.sku, demanda: parseFloat(nuevoItem.demanda), costo: parseFloat(nuevoItem.costo) };
     try {
-        await fetch('http://localhost:8080/api/inventory/add', {
+        await fetch('${API_URL}/api/inventory/add', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify([productoNuevo])
@@ -61,7 +63,7 @@ function App() {
 
   const eliminarProducto = async (skuAEliminar: string) => {
     try {
-        await fetch(`http://localhost:8080/api/inventory/delete/${skuAEliminar}`, {
+        await fetch(`${API_URL}/api/inventory/delete/${skuAEliminar}`, {
             method: 'DELETE'
         });
         setInventario(inventario.filter(item => item.sku !== skuAEliminar));
@@ -70,7 +72,7 @@ function App() {
 
   const editarProducto = async (skuOriginal: string, productoEditado: any) => {
     try {
-        await fetch(`http://localhost:8080/api/inventory/update/${skuOriginal}`, {
+        await fetch(`${API_URL}/api/inventory/update/${skuOriginal}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(productoEditado)
@@ -85,7 +87,7 @@ function App() {
   useEffect(() => {
     const fetchMetricas = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/inventory/calculate', {
+        const response = await fetch('${API_URL}/api/inventory/calculate', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(params)
