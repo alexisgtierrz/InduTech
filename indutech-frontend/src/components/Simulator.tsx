@@ -111,7 +111,7 @@ export const Simulator = ({ params, setParams, resultados, handleChange, inventa
             </div>
           </div>
           <div className="mini-cards-grid grid-2-cols">
-            <div className="mini-card card-red"><h4>{resultados.puntoReorden}</h4><p>ROP</p></div>
+            <div className="mini-card card-red"><h4>{resultados.puntoReorden}</h4><p>Punto de Reorden (ROP)</p></div>
             <div className="mini-card card-green"><h4>{resultados.inventarioSeguridad}</h4><p>Inventario Seguridad (SS)</p></div>
           </div>
         </div>
