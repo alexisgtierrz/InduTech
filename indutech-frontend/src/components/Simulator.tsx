@@ -1,16 +1,49 @@
 import React from 'react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 interface Props {
   params: any;
+  setParams: any;
   resultados: any;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  inventarioABC: any[];
 }
 
-export const Simulator = ({ params, resultados, handleChange }: Props) => {
+export const Simulator = ({ params, setParams, resultados, handleChange, inventarioABC }: Props) => {
+
+  const handleSelectSKU = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const skuSeleccionado = e.target.value;
+    const producto = inventarioABC.find(item => item.sku === skuSeleccionado);
+    
+    if (producto) {
+      setParams((prev: any) => ({
+        ...prev,
+        demandaAnual: producto.demanda
+      }));
+    }
+  };
+
   return (
     <div className="simulador-container full-width">
+      
+      <div className="panel" style={{ marginBottom: '20px', backgroundColor: '#f8fafc', border: '1px solid #cbd5e1' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <label style={{ fontWeight: 'bold', color: '#0f172a', fontSize: '1.1em' }}>Seleccionar Producto a Analizar:</label>
+          <select 
+            onChange={handleSelectSKU} 
+            style={{ padding: '10px', borderRadius: '6px', border: '1px solid #94a3b8', fontSize: '1em', minWidth: '300px' }}
+          >
+            {inventarioABC.map(item => (
+              <option key={item.sku} value={item.sku}>
+                {item.sku} - Clase {item.clase} (Demanda: {item.demanda})
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
       <div className="panel global-params">
-        <h2>Parámetros Globales</h2>
+        <h2>Parámetros Globales (Afectan a todo el modelo)</h2>
         <div className="inputs-row">
           <div className="input-group">
             <label>Demanda Anual (D):</label>
@@ -42,9 +75,10 @@ export const Simulator = ({ params, resultados, handleChange }: Props) => {
               </div>
             </div>
           </div>
+          
           <div className="mini-cards-grid">
-            <div className="mini-card card-blue"><h4>{resultados.loteOptimoEPQ} unid.</h4><p>Lote Óptimo (Q*)</p></div>
-            <div className="mini-card card-lightblue"><h4>{resultados.inventarioMaximo} unid.</h4><p>Inventario Máximo (Imax)</p></div>
+            <div className="mini-card card-blue"><h4>{resultados.loteOptimoEPQ}</h4><p>Lote Óptimo (Q*)</p></div>
+            <div className="mini-card card-lightblue"><h4>{resultados.inventarioMaximo}</h4><p>Inventario Máximo (Imax)</p></div>
             <div className="mini-card card-gray"><h4>{resultados.tiempoCicloDias} días</h4><p>T (días)</p></div>
             <div className="mini-card card-gray"><h4>{resultados.tiempoProduccionDias} días</h4><p>Tiempo de Prod. (t1)</p></div>
           </div>
@@ -72,18 +106,13 @@ export const Simulator = ({ params, resultados, handleChange }: Props) => {
               </div>
               <div className="input-group">
                 <label>Desviación Demanda (σd):</label>
-                <input 
-                  type="number" 
-                  name="desviacion" 
-                  value={params.desviacion} 
-                  onChange={handleChange} 
-                />
+                <input type="number" name="desviacion" value={params.desviacion} onChange={handleChange} />
               </div>
             </div>
           </div>
           <div className="mini-cards-grid grid-2-cols">
-            <div className="mini-card card-red"><h4>{resultados.puntoReorden} unid.</h4><p>Punto de Reorden (ROP)</p></div>
-            <div className="mini-card card-green"><h4>{resultados.inventarioSeguridad} unid.</h4><p>Inventario Seguridad (SS)</p></div>
+            <div className="mini-card card-red"><h4>{resultados.puntoReorden}</h4><p>ROP</p></div>
+            <div className="mini-card card-green"><h4>{resultados.inventarioSeguridad}</h4><p>Inventario Seguridad (SS)</p></div>
           </div>
         </div>
       </div>

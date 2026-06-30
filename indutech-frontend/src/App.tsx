@@ -121,7 +121,13 @@ function App() {
             />
         )}
         {tabActiva === 'simulador' && (
-            <Simulator params={params} resultados={resultados} handleChange={handleChange} />
+            <Simulator 
+              params={params} 
+              setParams={setParams} 
+              resultados={resultados} 
+              handleChange={handleChange} 
+              inventarioABC={inventarioABC} 
+            />
         )}
       </div>
     </div>
