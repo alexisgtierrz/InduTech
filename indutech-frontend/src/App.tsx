@@ -10,6 +10,8 @@ function App() {
   const [inventario, setInventario] = useState<any[]>([]);
   const [nuevoItem, setNuevoItem] = useState({ sku: '', demanda: '', costo: '' });
   const [inventarioABC, setInventarioABC] = useState<any[]>([]);
+  const [limiteA, setLimiteA] = useState(80);
+  const [limiteB, setLimiteB] = useState(95);
 
   useEffect(() => {
     localStorage.setItem('pestañaActiva', tabActiva);
@@ -29,7 +31,7 @@ function App() {
   useEffect(() => {
     const fetchABC = async () => {
       try {
-        const response = await fetch('http://localhost:8080/api/inventory/abc', {
+        const response = await fetch(`http://localhost:8080/api/inventory/abc?limiteA=${limiteA}&limiteB=${limiteB}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(inventario)
@@ -39,7 +41,8 @@ function App() {
     };
     if (inventario.length > 0) fetchABC();
     else setInventarioABC([]);
-  }, [inventario]);
+    
+  }, [inventario, limiteA, limiteB]);
 
   const agregarProducto = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -118,6 +121,10 @@ function App() {
                 editarProducto={editarProducto}
                 valorTotalInventario={inventarioABC.reduce((acc, item) => acc + item.valorAnual, 0)}
                 articuloCritico={inventarioABC.length > 0 ? inventarioABC[0].sku : 'Ninguno'}
+                limiteA={limiteA}
+                setLimiteA={setLimiteA}
+                limiteB={limiteB}
+                setLimiteB={setLimiteB}
             />
         )}
         {tabActiva === 'simulador' && (

@@ -14,9 +14,16 @@ interface Props {
   editarProducto: (skuOriginal: string, productoEditado: any) => void;
   valorTotalInventario: number;
   articuloCritico: string;
+  limiteA: number;
+  setLimiteA: (val: number) => void;
+  limiteB: number;
+  setLimiteB: (val: number) => void;
 }
 
-export const AbcCalculator = ({ inventario, inventarioABC, nuevoItem, setNuevoItem, agregarProducto, eliminarProducto, editarProducto, valorTotalInventario, articuloCritico }: Props) => {
+export const AbcCalculator = ({ inventario, inventarioABC, nuevoItem, setNuevoItem, agregarProducto, eliminarProducto, editarProducto, valorTotalInventario, articuloCritico, limiteA,
+  setLimiteA,
+  limiteB,
+  setLimiteB }: Props) => {
   
   const [editingSku, setEditingSku] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ sku: '', demanda: '', costo: '' });
@@ -57,7 +64,56 @@ export const AbcCalculator = ({ inventario, inventarioABC, nuevoItem, setNuevoIt
           <span className="stat-value">${valorTotalInventario.toLocaleString()}</span>
         </div>
       </div>
-      
+      <div className="panel" style={{ marginBottom: '25px', backgroundColor: '#f8fafc', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+        <h3 style={{ marginTop: 0, color: '#334155', fontSize: '1.1em', marginBottom: '15px' }}>
+          Configuración de Límites de Clasificación
+        </h3>
+        
+        <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: '250px' }}>
+            <label style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', color: '#16a34a', marginBottom: '8px' }}>
+              <span>Límite Clase A</span>
+              <span>{limiteA}%</span>
+            </label>
+            <input 
+              type="range" 
+              min="10" 
+              max="98" 
+              value={limiteA} 
+              onChange={(e) => {
+                const nuevoA = Number(e.target.value);
+                setLimiteA(nuevoA);
+                if (nuevoA >= limiteB) {
+                  setLimiteB(nuevoA + 1);
+                }
+              }}
+              style={{ width: '100%', accentColor: '#16a34a' }}
+            />
+          </div>
+
+          <div style={{ flex: 1, minWidth: '250px' }}>
+            <label style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', color: '#ca8a04', marginBottom: '8px' }}>
+              <span>Límite Clase B</span>
+              <span>{limiteB}%</span>
+            </label>
+            <input 
+              type="range" 
+              min="11" 
+              max="99" 
+              value={limiteB} 
+              onChange={(e) => {
+                const nuevoB = Number(e.target.value);
+                setLimiteB(nuevoB);
+                if (nuevoB <= limiteA) {
+                  setLimiteA(nuevoB - 1);
+                }
+              }}
+              style={{ width: '100%', accentColor: '#ca8a04' }}
+            />
+          </div>
+        </div>
+      </div>
+
       <form onSubmit={agregarProducto} className="add-item-form">
         <input type="text" placeholder="Nombre / SKU" value={nuevoItem.sku} onChange={e => setNuevoItem({...nuevoItem, sku: e.target.value})} required />
         <input type="number" placeholder="Demanda Anual" value={nuevoItem.demanda} onChange={e => setNuevoItem({...nuevoItem, demanda: e.target.value})} required />
@@ -166,8 +222,8 @@ export const AbcCalculator = ({ inventario, inventarioABC, nuevoItem, setNuevoIt
                   activeDot={{ r: 8 }} 
                 />
 
-                <ReferenceLine yAxisId="right" y={80} stroke="#16a34a" strokeDasharray="5 5" label={{ position: 'top', value: 'Límite Clase A (80%)', fill: '#16a34a', fontSize: 12, fontWeight: 'bold' }} />
-                <ReferenceLine yAxisId="right" y={96} stroke="#ca8a04" strokeDasharray="5 5" label={{ position: 'insideTop', value: 'Límite Clase B (96%)', fill: '#ca8a04', fontSize: 12, fontWeight: 'bold' }} />
+                <ReferenceLine y={limiteA} stroke="#16a34a" strokeDasharray="5 5" label={{ position: 'top', value: `Límite Clase A (${limiteA}%)`, fill: '#16a34a', fontSize: 12, fontWeight: 'bold' }} />
+                <ReferenceLine y={limiteB} stroke="#ca8a04" strokeDasharray="5 5" label={{ position: 'insideTop', value: `Límite Clase B (${limiteB}%)`, fill: '#ca8a04', fontSize: 12, fontWeight: 'bold' }} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
