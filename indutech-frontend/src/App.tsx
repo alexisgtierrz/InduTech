@@ -22,7 +22,7 @@ function App() {
   useEffect(() => {
     const cargarProductos = async () => {
       try {
-        const res = await fetch('${API_URL}/api/inventory/all');
+        const res = await fetch(`${API_URL}/api/inventory/all`);
         const data = await res.json();
         setInventario(data);
       } catch (e) { console.error("Error al cargar productos", e); }
@@ -51,7 +51,7 @@ function App() {
     if (!nuevoItem.sku || !nuevoItem.demanda || !nuevoItem.costo) return;
     const productoNuevo = { sku: nuevoItem.sku, demanda: parseFloat(nuevoItem.demanda), costo: parseFloat(nuevoItem.costo) };
     try {
-        await fetch('${API_URL}/api/inventory/add', {
+        await fetch(`${API_URL}/api/inventory/add`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify([productoNuevo])
@@ -87,7 +87,7 @@ function App() {
   useEffect(() => {
     const fetchMetricas = async () => {
       try {
-        const response = await fetch('${API_URL}/api/inventory/calculate', {
+        const response = await fetch(`${API_URL}/api/inventory/calculate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(params)
