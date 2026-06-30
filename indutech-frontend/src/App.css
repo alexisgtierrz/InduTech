@@ -450,6 +450,65 @@ h2 {
 .card-gray { background: linear-gradient(135deg, #64748b 0%, #334155 100%); }
 .card-red { background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%); }
 .card-green { background: linear-gradient(135deg, #10b981 0%, #047857 100%); }
+.card-amber { background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); }
+
+.comparativa-grid {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.comparativa-col {
+  flex: 1;
+  min-width: 320px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.comparativa-titulo {
+  margin: 0 0 15px 0;
+  color: #1e293b;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.comparativa-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.comparativa-header .comparativa-titulo {
+  margin-bottom: 0;
+  text-align: left;
+}
+
+.input-pedidos-comparacion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-pedidos-comparacion label {
+  font-size: 0.85rem;
+  color: #475569;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.input-pedidos-comparacion input {
+  width: 70px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  font-size: 0.9rem;
+}
 
 .btn-edit {
   background: none;

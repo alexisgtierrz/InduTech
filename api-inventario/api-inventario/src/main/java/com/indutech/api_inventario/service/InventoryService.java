@@ -1,6 +1,7 @@
 package com.indutech.api_inventario.service;
 
 import com.indutech.api_inventario.dto.AbcResponseDTO;
+import com.indutech.api_inventario.dto.EscenarioPedidoDTO;
 import com.indutech.api_inventario.dto.ItemDTO;
 import com.indutech.api_inventario.dto.InventoryRequest;
 import com.indutech.api_inventario.dto.InventoryResponse;
@@ -41,7 +42,47 @@ public class InventoryService {
 
         int rop = (int) Math.round((demandaDiaria * req.tiempoEntrega) + ssExacto);
 
-        return new InventoryResponse(epq, ss, rop, inventarioMaximo, tiempoCicloDias, tiempoProduccionDias);
+        double sigmaL = req.desviacion * Math.sqrt(req.tiempoEntrega);
+        double faltanteEsperadoPorCiclo = calcularFaltanteEsperado(sigmaL, z);
+        double probabilidadFaltantePorCiclo = 1.0 - probabilidad;
+
+        double numeroPedidosActual = epq > 0 ? req.demandaAnual / epq : 0;
+        EscenarioPedidoDTO escenarioActual = new EscenarioPedidoDTO(
+                numeroPedidosActual, epq, faltanteEsperadoPorCiclo, probabilidadFaltantePorCiclo);
+
+        double pedidosComparacion = req.pedidosComparacion > 0 ? req.pedidosComparacion : 2;
+        double loteParaComparacion = req.demandaAnual / pedidosComparacion;
+        EscenarioPedidoDTO escenarioComparacion = new EscenarioPedidoDTO(
+                pedidosComparacion, loteParaComparacion, faltanteEsperadoPorCiclo, probabilidadFaltantePorCiclo);
+
+        InventoryResponse response = new InventoryResponse(epq, ss, rop, inventarioMaximo, tiempoCicloDias, tiempoProduccionDias);
+        response.escenarioActual = escenarioActual;
+        response.escenarioComparacion = escenarioComparacion;
+
+        return response;
+    }
+
+    /**
+     * Faltante esperado por ciclo (en unidades), usando la función de pérdida normal estándar:
+     * E[faltante] = sigma_L * ( phi(z) - z * (1 - Phi(z)) )
+     * donde phi es la densidad normal estándar y Phi(z) es la probabilidad acumulada (nivel de servicio).
+     */
+    private double calcularFaltanteEsperado(double sigmaL, double z) {
+        if (sigmaL <= 0) return 0;
+        double phi = Math.exp(-(z * z) / 2.0) / Math.sqrt(2 * Math.PI);
+        double unitNormalLoss = phi - z * (1.0 - acumuladaNormal(z));
+        return sigmaL * Math.max(unitNormalLoss, 0);
+    }
+
+    /**
+     * Aproximación de la función de distribución acumulada normal estándar Phi(z),
+     * usada para obtener Phi(z) a partir de z (proceso inverso al de calcularZ).
+     */
+    private double acumuladaNormal(double z) {
+        double t = 1.0 / (1.0 + 0.2316419 * Math.abs(z));
+        double d = 0.3989423 * Math.exp(-z * z / 2.0);
+        double prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+        return z >= 0 ? 1.0 - prob : prob;
     }
 
     private double calcularZ(double p) {

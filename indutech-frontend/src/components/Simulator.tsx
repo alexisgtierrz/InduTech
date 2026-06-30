@@ -264,6 +264,81 @@ export const Simulator = ({ params, setParams, resultados, handleChange, inventa
           </ResponsiveContainer>
         </div>
       </div>
+
+      <div className="panel full-width chart-panel">
+        <h3 className="module-title">Riesgo de Faltantes y Tasa de Servicio</h3>
+        <p className="chart-subtitle">
+          Con un nivel de servicio configurado de <strong>{params.nivelServicio}%</strong>, cada ciclo de pedido tiene una
+          probabilidad de <strong>{(resultados.escenarioActual?.probabilidadFaltantePorCiclo * 100).toFixed(2)}%</strong> de
+          quedarse sin stock antes de que llegue el siguiente pedido, con un faltante esperado de{' '}
+          <strong>{resultados.escenarioActual?.faltanteEsperadoPorCiclo.toFixed(2)} unidades</strong> por ciclo en ese caso.
+        </p>
+
+        <div className="comparativa-grid">
+          <div className="comparativa-col">
+            <h4 className="comparativa-titulo">Escenario Actual (EPQ óptimo)</h4>
+            <div className="mini-cards-grid grid-2-cols">
+              <div className="mini-card card-gray">
+                <h4>{resultados.escenarioActual?.numeroPedidosAnual.toFixed(1)}</h4>
+                <p>Pedidos al año</p>
+              </div>
+              <div className="mini-card card-gray">
+                <h4>{resultados.escenarioActual?.loteOptimoPorPedido.toFixed(0)}</h4>
+                <p>Unidades por pedido</p>
+              </div>
+              <div className="mini-card card-amber">
+                <h4>{resultados.escenarioActual?.faltanteEsperadoAnual.toFixed(1)}</h4>
+                <p>Unidades en faltante esperadas / año</p>
+              </div>
+              <div className="mini-card card-red">
+                <h4>{resultados.escenarioActual?.vecesSinStockEsperadasAnio.toFixed(2)}</h4>
+                <p>Veces sin stock esperadas / año</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="comparativa-col">
+            <div className="comparativa-header">
+              <h4 className="comparativa-titulo">Escenario de Comparación</h4>
+              <div className="input-pedidos-comparacion">
+                <label>N° de pedidos al año:</label>
+                <input
+                  type="number"
+                  name="pedidosComparacion"
+                  min="1"
+                  step="1"
+                  value={params.pedidosComparacion}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+            <div className="mini-cards-grid grid-2-cols">
+              <div className="mini-card card-gray">
+                <h4>{resultados.escenarioComparacion?.numeroPedidosAnual.toFixed(1)}</h4>
+                <p>Pedidos al año</p>
+              </div>
+              <div className="mini-card card-gray">
+                <h4>{resultados.escenarioComparacion?.loteOptimoPorPedido.toFixed(0)}</h4>
+                <p>Unidades por pedido</p>
+              </div>
+              <div className="mini-card card-amber">
+                <h4>{resultados.escenarioComparacion?.faltanteEsperadoAnual.toFixed(1)}</h4>
+                <p>Unidades en faltante esperadas / año</p>
+              </div>
+              <div className="mini-card card-red">
+                <h4>{resultados.escenarioComparacion?.vecesSinStockEsperadasAnio.toFixed(2)}</h4>
+                <p>Veces sin stock esperadas / año</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="chart-subtitle" style={{ marginTop: '20px' }}>
+          {resultados.escenarioComparacion?.vecesSinStockEsperadasAnio < resultados.escenarioActual?.vecesSinStockEsperadasAnio
+            ? `Pasar a ${params.pedidosComparacion} pedido(s) al año reduciría el riesgo esperado de quedarse sin stock, ya que hay menos ciclos de pedido en el año (menos oportunidades de fallar), aunque cada pedido sería de un lote mayor y elevaría el costo de mantenimiento.`
+            : `Pasar a ${params.pedidosComparacion} pedido(s) al año aumentaría el riesgo esperado de quedarse sin stock, ya que la probabilidad de faltante por ciclo no cambia y se está comparando contra un número similar o mayor de ciclos riesgosos al año.`}
+        </p>
+      </div>
     </div>
   );
 };

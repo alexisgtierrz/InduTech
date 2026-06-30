@@ -9,4 +9,5 @@ public class InventoryRequest {
     public double tiempoEntrega;
     public double desviacion;
     public double nivelServicio;
+    public double pedidosComparacion = 2; 
 }
