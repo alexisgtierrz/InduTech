@@ -20,7 +20,7 @@ interface Props {
   setLimiteB: (val: number) => void;
 }
 
-export const AbcCalculator = ({ inventario, inventarioABC, nuevoItem, setNuevoItem, agregarProducto, eliminarProducto, editarProducto, valorTotalInventario, articuloCritico, limiteA,
+export const AbcCalculator = ({ inventarioABC, nuevoItem, setNuevoItem, agregarProducto, eliminarProducto, editarProducto, valorTotalInventario, limiteA,
   setLimiteA,
   limiteB,
   setLimiteB }: Props) => {

@@ -386,6 +386,27 @@ h2 {
 .module-epq .module-title { border-bottom: 3px solid #3b82f6; color: #1e3a8a; }
 .module-rop .module-title { border-bottom: 3px solid #f43f5e; color: #9f1239; }
 
+.chart-panel {
+  margin-top: 25px;
+}
+
+.chart-panel .module-title {
+  border-bottom: 2px solid #f1f5f9;
+  color: #1e293b;
+}
+
+.chart-subtitle {
+  color: #64748b;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-top: -8px;
+  margin-bottom: 20px;
+}
+
+.chart-subtitle strong {
+  color: #334155;
+}
+
 .input-row-half {
   display: flex;
   gap: 15px;
