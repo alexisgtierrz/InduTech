@@ -79,7 +79,7 @@ function App() {
     } catch (e) { console.error("Error al editar", e); }
   };
 
-  const [params, setParams] = useState({ demandaAnual: 950, costoPreparacion: 300, tasaProduccion: 2000, costoMantenimiento: 20, diasOperativos: 250, tiempoEntrega: 6, desviacion: 2, nivelServicio: 98, pedidosComparacion: 2 })
+  const [params, setParams] = useState({ demandaAnual: 950, costoPreparacion: 300, tasaProduccion: 2000, costoMantenimiento: 20, diasOperativos: 250, tiempoEntrega: 6, desviacion: 2, nivelServicio: 98, pedidosComparacion: 2, nivelServicioComparacion: 95, tiempoEntregaComparacion: 12 })
   const [resultados, setResultados] = useState({ loteOptimoEPQ: 0, inventarioSeguridad: 0, puntoReorden: 0, inventarioMaximo: 0, tiempoCicloDias: 0, tiempoProduccionDias: 0 });
 
   useEffect(() => {

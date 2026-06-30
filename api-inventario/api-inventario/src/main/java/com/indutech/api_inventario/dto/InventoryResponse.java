@@ -12,6 +12,10 @@ public class InventoryResponse {
     public EscenarioPedidoDTO escenarioActual;
     public EscenarioPedidoDTO escenarioComparacion;
 
+    public EscenarioRiesgoDTO escenarioRiesgoActual;
+    public EscenarioRiesgoDTO escenarioServicioComparacion;
+    public EscenarioRiesgoDTO escenarioEntregaComparacion;
+
     public InventoryResponse(int loteOptimoEPQ, int inventarioSeguridad, int puntoReorden, int inventarioMaximo, int tiempoCicloDias, int tiempoProduccionDias) {
         this.loteOptimoEPQ = loteOptimoEPQ;
         this.inventarioSeguridad = inventarioSeguridad;

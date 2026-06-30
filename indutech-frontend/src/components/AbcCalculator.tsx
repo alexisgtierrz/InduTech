@@ -64,14 +64,14 @@ export const AbcCalculator = ({ inventarioABC, nuevoItem, setNuevoItem, agregarP
           <span className="stat-value">${valorTotalInventario.toLocaleString()}</span>
         </div>
       </div>
-      <div className="panel" style={{ marginBottom: '25px', backgroundColor: '#f8fafc', padding: '20px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-        <h3 style={{ marginTop: 0, color: '#334155', fontSize: '1.1em', marginBottom: '15px' }}>
+      <div className="limits-panel">
+        <h3 className="limits-panel-title">
           Configuración de Límites de Clasificación
         </h3>
-        
-        <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1, minWidth: '250px' }}>
-            <label style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', color: '#16a34a', marginBottom: '8px' }}>
+
+        <div className="limits-row">
+          <div className="limit-control limit-a">
+            <label>
               <span>Límite Clase A</span>
               <span>{limiteA}%</span>
             </label>
@@ -87,12 +87,11 @@ export const AbcCalculator = ({ inventarioABC, nuevoItem, setNuevoItem, agregarP
                   setLimiteB(nuevoA + 1);
                 }
               }}
-              style={{ width: '100%', accentColor: '#16a34a' }}
             />
           </div>
 
-          <div style={{ flex: 1, minWidth: '250px' }}>
-            <label style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 'bold', color: '#ca8a04', marginBottom: '8px' }}>
+          <div className="limit-control limit-b">
+            <label>
               <span>Límite Clase B</span>
               <span>{limiteB}%</span>
             </label>
@@ -108,7 +107,6 @@ export const AbcCalculator = ({ inventarioABC, nuevoItem, setNuevoItem, agregarP
                   setLimiteA(nuevoB - 1);
                 }
               }}
-              style={{ width: '100%', accentColor: '#ca8a04' }}
             />
           </div>
         </div>
@@ -163,11 +161,11 @@ export const AbcCalculator = ({ inventarioABC, nuevoItem, setNuevoItem, agregarP
       </table>
 
       {datosProcesados.length > 0 && (
-        <div style={{ marginTop: '50px', paddingTop: '30px', borderTop: '2px solid #f1f5f9' }}>
-          <h3 style={{ textAlign: 'center', color: '#1e293b', marginBottom: '30px' }}>
+        <div style={{ marginTop: '40px', paddingTop: '26px', borderTop: '1px solid var(--border-soft)' }}>
+          <h3 className="pareto-title">
             Gráfico de Pareto
           </h3>
-          <div style={{ height: '450px', width: '100%', backgroundColor: '#ffffff', borderRadius: '12px', padding: '20px' }}>
+          <div className="pareto-chart-wrap">
             <ResponsiveContainer>
               <ComposedChart data={datosProcesados} margin={{ top: 20, right: 40, left: 20, bottom: 40 }}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.4} vertical={false} />
@@ -177,14 +175,14 @@ export const AbcCalculator = ({ inventarioABC, nuevoItem, setNuevoItem, agregarP
                   angle={-45} 
                   textAnchor="end" 
                   height={60} 
-                  tick={{ fill: '#64748b', fontSize: 12 }} 
+                  tick={{ fill: 'var(--text-soft)', fontSize: 12 }} 
                   dy={10} 
                 />
                 
                 <YAxis 
                   yAxisId="left" 
                   tickFormatter={(val) => `$${val.toLocaleString()}`} 
-                  tick={{ fill: '#64748b', fontSize: 12 }} 
+                  tick={{ fill: 'var(--text-soft)', fontSize: 12 }} 
                 />
                 
                 <YAxis 
@@ -192,7 +190,7 @@ export const AbcCalculator = ({ inventarioABC, nuevoItem, setNuevoItem, agregarP
                   orientation="right" 
                   domain={[0, 100]} 
                   tickFormatter={(val) => `${val}%`} 
-                  tick={{ fill: '#0f172a', fontWeight: 'bold', fontSize: 12 }} 
+                  tick={{ fill: 'var(--text)', fontWeight: 'bold', fontSize: 12 }} 
                 />
                 
                 <Tooltip 
@@ -201,12 +199,21 @@ export const AbcCalculator = ({ inventarioABC, nuevoItem, setNuevoItem, agregarP
                       ? [`${value}%`, name] 
                       : [`$${Number(value).toLocaleString()}`, name]
                   }
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+                  contentStyle={{ 
+                    backgroundColor: 'var(--surface)', 
+                    borderRadius: '8px', 
+                    border: '1px solid var(--border-soft)', 
+                    boxShadow: 'var(--shadow)' 
+                  }}
                 />
 
                 <Bar yAxisId="left" dataKey="valorAnual" name="Valor Anual ($)" radius={[4, 4, 0, 0]}>
                   {datosProcesados.map((entry, index) => {
-                    const colores = { A: '#86efac', B: '#fef08a', C: '#fca5a5' };
+                    const colores = {
+                      A: 'var(--pareto-a)',
+                      B: 'var(--pareto-b)',
+                      C: 'var(--pareto-c)'
+                    };
                     return <Cell key={`cell-${index}`} fill={colores[entry.clase as keyof typeof colores]} />;
                   })}
                 </Bar>
@@ -216,14 +223,14 @@ export const AbcCalculator = ({ inventarioABC, nuevoItem, setNuevoItem, agregarP
                   type="monotone" 
                   dataKey="porcentajeAcumulado" 
                   name="% Acumulado" 
-                  stroke="#0f172a" 
-                  strokeWidth={3} 
-                  dot={{ r: 5, fill: '#0f172a', stroke: '#ffffff', strokeWidth: 2 }} 
-                  activeDot={{ r: 8 }} 
+                  stroke="var(--pareto-line)" 
+                  strokeWidth={2} 
+                  dot={{ r: 3, fill: 'var(--surface)', stroke: 'var(--pareto-line)', strokeWidth: 2 }} 
+                  activeDot={{ r: 6 }} 
                 />
 
-                <ReferenceLine y={limiteA} stroke="#16a34a" strokeDasharray="5 5" label={{ position: 'top', value: `Límite Clase A (${limiteA}%)`, fill: '#16a34a', fontSize: 12, fontWeight: 'bold' }} />
-                <ReferenceLine y={limiteB} stroke="#ca8a04" strokeDasharray="5 5" label={{ position: 'insideTop', value: `Límite Clase B (${limiteB}%)`, fill: '#ca8a04', fontSize: 12, fontWeight: 'bold' }} />
+                <ReferenceLine y={limiteA} stroke="var(--pareto-a)" strokeDasharray="4 4" label={{ position: 'top', value: `Límite Clase A (${limiteA}%)`, fill: 'var(--pareto-a)', fontSize: 11, fontWeight: '600' }} />
+                <ReferenceLine y={limiteB} stroke="var(--pareto-b)" strokeDasharray="4 4" label={{ position: 'insideTop', value: `Límite Clase B (${limiteB}%)`, fill: 'var(--pareto-b)', fontSize: 11, fontWeight: '600' }} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>

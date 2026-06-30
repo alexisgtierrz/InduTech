@@ -2,6 +2,7 @@ package com.indutech.api_inventario.service;
 
 import com.indutech.api_inventario.dto.AbcResponseDTO;
 import com.indutech.api_inventario.dto.EscenarioPedidoDTO;
+import com.indutech.api_inventario.dto.EscenarioRiesgoDTO;
 import com.indutech.api_inventario.dto.ItemDTO;
 import com.indutech.api_inventario.dto.InventoryRequest;
 import com.indutech.api_inventario.dto.InventoryResponse;
@@ -32,34 +33,59 @@ public class InventoryService {
 
         double demandaDiaria = req.demandaAnual / req.diasOperativos;
 
-        double probabilidad = req.nivelServicio / 100.0;
-
-        double z = calcularZ(probabilidad);
-
-        double ssExacto = z * req.desviacion * Math.sqrt(req.tiempoEntrega);
-
-        int ss = (int) Math.round(ssExacto);
-
-        int rop = (int) Math.round((demandaDiaria * req.tiempoEntrega) + ssExacto);
-
-        double sigmaL = req.desviacion * Math.sqrt(req.tiempoEntrega);
-        double faltanteEsperadoPorCiclo = calcularFaltanteEsperado(sigmaL, z);
-        double probabilidadFaltantePorCiclo = 1.0 - probabilidad;
-
         double numeroPedidosActual = epq > 0 ? req.demandaAnual / epq : 0;
+
+        EscenarioRiesgoDTO escenarioRiesgoActual = calcularEscenarioRiesgo(
+                req.nivelServicio, req.tiempoEntrega, req.desviacion, demandaDiaria, numeroPedidosActual);
+
+        EscenarioRiesgoDTO escenarioServicioComparacion = calcularEscenarioRiesgo(
+                req.nivelServicioComparacion, req.tiempoEntrega, req.desviacion, demandaDiaria, numeroPedidosActual);
+
+        EscenarioRiesgoDTO escenarioEntregaComparacion = calcularEscenarioRiesgo(
+                req.nivelServicio, req.tiempoEntregaComparacion, req.desviacion, demandaDiaria, numeroPedidosActual);
+
+        int ss = escenarioRiesgoActual.inventarioSeguridad;
+        int rop = escenarioRiesgoActual.puntoReorden;
+
         EscenarioPedidoDTO escenarioActual = new EscenarioPedidoDTO(
-                numeroPedidosActual, epq, faltanteEsperadoPorCiclo, probabilidadFaltantePorCiclo);
+                numeroPedidosActual, epq, escenarioRiesgoActual.faltanteEsperadoPorCiclo,
+                escenarioRiesgoActual.probabilidadFaltantePorCiclo);
 
         double pedidosComparacion = req.pedidosComparacion > 0 ? req.pedidosComparacion : 2;
         double loteParaComparacion = req.demandaAnual / pedidosComparacion;
         EscenarioPedidoDTO escenarioComparacion = new EscenarioPedidoDTO(
-                pedidosComparacion, loteParaComparacion, faltanteEsperadoPorCiclo, probabilidadFaltantePorCiclo);
+                pedidosComparacion, loteParaComparacion, escenarioRiesgoActual.faltanteEsperadoPorCiclo,
+                escenarioRiesgoActual.probabilidadFaltantePorCiclo);
 
         InventoryResponse response = new InventoryResponse(epq, ss, rop, inventarioMaximo, tiempoCicloDias, tiempoProduccionDias);
         response.escenarioActual = escenarioActual;
         response.escenarioComparacion = escenarioComparacion;
+        response.escenarioRiesgoActual = escenarioRiesgoActual;
+        response.escenarioServicioComparacion = escenarioServicioComparacion;
+        response.escenarioEntregaComparacion = escenarioEntregaComparacion;
 
         return response;
+    }
+
+    /**
+     * Calcula ROP, SS y métricas de riesgo de faltante para una combinación dada
+     * de nivel de servicio y tiempo de entrega, manteniendo fijo el resto del modelo.
+     */
+    private EscenarioRiesgoDTO calcularEscenarioRiesgo(double nivelServicio, double tiempoEntrega, double desviacion,
+                                                         double demandaDiaria, double numeroPedidosActual) {
+        double probabilidad = nivelServicio / 100.0;
+        double z = calcularZ(probabilidad);
+
+        double sigmaL = desviacion * Math.sqrt(tiempoEntrega);
+        double ssExacto = z * sigmaL;
+        int ss = (int) Math.round(ssExacto);
+        int rop = (int) Math.round((demandaDiaria * tiempoEntrega) + ssExacto);
+
+        double faltanteEsperadoPorCiclo = calcularFaltanteEsperado(sigmaL, z);
+        double probabilidadFaltantePorCiclo = 1.0 - probabilidad;
+
+        return new EscenarioRiesgoDTO(nivelServicio, tiempoEntrega, rop, ss,
+                faltanteEsperadoPorCiclo, probabilidadFaltantePorCiclo, numeroPedidosActual);
     }
 
     /**
