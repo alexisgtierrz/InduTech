@@ -27,8 +27,11 @@ public class InventoryController {
     }
 
     @PostMapping("/abc")
-    public List<AbcResponseDTO> calcularABC(@RequestBody List<ItemDTO> inventario) {
-        return inventoryService.clasificarABC(inventario);
+    public List<AbcResponseDTO> calcularABC(@RequestBody List<ItemDTO> inventario,
+                                            @RequestParam double limiteA,
+                                            @RequestParam double limiteB) {
+
+        return inventoryService.clasificarABC(inventario, limiteA, limiteB);
     }
 
     @PostMapping("/add")

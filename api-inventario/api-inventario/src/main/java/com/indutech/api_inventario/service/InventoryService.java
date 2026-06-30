@@ -6,7 +6,6 @@ import com.indutech.api_inventario.dto.InventoryRequest;
 import com.indutech.api_inventario.dto.InventoryResponse;
 import com.indutech.api_inventario.entity.Producto;
 import com.indutech.api_inventario.repository.ProductoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +55,7 @@ public class InventoryService {
         return t - ((c2 * t + c1) * t + c0) / (((d3 * t + d2) * t + d1) * t + 1.0);
     }
 
-    public List<AbcResponseDTO> clasificarABC(List<ItemDTO> inventario) {
+    public List<AbcResponseDTO> clasificarABC(List<ItemDTO> inventario, double limiteA, double limiteB) {
         List<AbcResponseDTO> resultados = new ArrayList<>();
         double valorTotal = 0;
 
@@ -83,9 +82,10 @@ public class InventoryService {
 
             double acumuladoConEsteItem = porcentajeAcumulado + res.porcentaje;
 
-            if (porcentajeAcumulado == 0 || acumuladoConEsteItem <= 80) {
+            // Aquí aplicamos los límites dinámicos que elige el usuario
+            if (porcentajeAcumulado == 0 || acumuladoConEsteItem <= limiteA) {
                 res.clase = "A";
-            } else if (acumuladoConEsteItem <= 96) {
+            } else if (acumuladoConEsteItem <= limiteB) {
                 res.clase = "B";
             } else {
                 res.clase = "C";
