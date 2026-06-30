@@ -68,7 +68,7 @@ export const AbcCalculator = ({ inventario, inventarioABC, nuevoItem, setNuevoIt
       <table className="abc-table">
         <thead>
           <tr>
-            <th>SKU</th><th>Demanda Anual</th><th>Costo Unit.</th><th>Valor Anual ($)</th><th>% Acumulado</th><th>Clase</th><th>Acción</th>
+            <th>SKU</th><th>Demanda Anual</th><th>Costo Unit. ($)</th><th>Valor Anual ($)</th><th>% Acumulado</th><th>Clase</th><th>Acción</th>
           </tr>
         </thead>
         <tbody>
